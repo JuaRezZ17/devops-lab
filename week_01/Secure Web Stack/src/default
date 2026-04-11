@@ -1,0 +1,18 @@
+server {
+	listen 80;
+	server_name local.webstack;
+	return 301 https://$host$request_uri;
+}
+
+server {
+	listen 443 ssl;
+	server_name local.webstack;
+
+	ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+	ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+
+	location / {
+		root /var/www/html;
+		index index.html;
+	}
+}
