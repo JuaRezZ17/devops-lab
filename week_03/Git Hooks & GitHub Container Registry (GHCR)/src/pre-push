@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# --- Settings ---
+# Replace ‘juarezz17’ with your actual GitHub username in lower case
+IMAGE_NAME="my_flask_app"
+GHCR_REPO="ghcr.io/juarezz17/my_flask_app:v1.0.0"
+
+echo "Starting pre-push hook..."
+
+# 1. Build the image with the latest changes before scanning
+echo "Building the local Docker image..."
+docker build -t $IMAGE_NAME .
+
+# 2. Scan with Trivy
+echo "Running security scan with Trivy..."
+trivy image --severity CRITICAL --exit-code 1 $IMAGE_NAME
+
+# Capture the result (output code) from Trivy
+TRIVY_STATUS=$?
+
+# 3. Assess the result
+if [ $TRIVY_STATUS -ne 0 ]; then
+    echo "Security Alert! Trivy has discovered CRITICAL vulnerabilities."
+    echo "Aborting the deployment to GHCR and cancelling the “git push”."
+    exit 1
+fi
+
+echo "Security analysis completed. No critical vulnerabilities found."
+
+# 4. Tag and upload to GHCR if everything is OK
+echo "Tagging the image..."
+docker tag $IMAGE_NAME $GHCR_REPO
+
+echo "Uploading the image to GitHub Container Registry..."
+docker push $GHCR_REPO
+
+if [ $? -eq 0 ]; then
+    echo "Image uploaded to GHCR successfully."
+    echo "Allowing the git push of the code..."
+    exit 0
+else
+    echo "There was an error uploading the image to GHCR. Aborting git push."
+    exit 1
+fi
