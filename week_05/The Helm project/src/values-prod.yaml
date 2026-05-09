@@ -1,0 +1,23 @@
+replicaCount: 3
+
+flask:
+  image: "jrsg/flask-app:prod"
+  port: 5000
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+
+tolerations:
+  - key: "environment"
+    operator: "Equal"
+    value: "produccion"
+    effect: "NoSchedule"
+
+redis:
+  enabled: true
+  image: "redis:alpine"

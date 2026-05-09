@@ -1,0 +1,12 @@
+replicaCount: 1
+
+flask:
+  image: "jrsg/flask-app:dev"
+  port: 5000
+
+resources: {}
+tolerations: []
+
+redis:
+  enabled: true
+  image: "redis:alpine"
