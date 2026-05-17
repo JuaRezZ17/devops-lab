@@ -1,0 +1,11 @@
+service:
+  type: LoadBalancer
+  port: 80
+
+redis:
+  enabled: true
+  image: redis:alpine
+
+flask:
+  port: 5000
+  image: jrsg/flask-app:lastest
