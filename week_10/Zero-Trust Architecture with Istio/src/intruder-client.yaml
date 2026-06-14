@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: intruder-client
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  containers:
+    - name: intruder-client
+      image: curlimages/curl
+      command: ["sleep", "3600"]
